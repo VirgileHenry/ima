@@ -1,0 +1,8 @@
+LOAD #3, R1
+; Commentaire
+etiquette :
+LOAD #1, R0 ; Comment
+PUSH R1
+NEW #4, R2
+LEA 3(R2), R2
+etiq : CMP R0, R1

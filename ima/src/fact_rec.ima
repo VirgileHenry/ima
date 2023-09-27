@@ -1,0 +1,27 @@
+; Programme principal : Lecture d'un entier positif, impression de sa factorielle
+; Rem : il faudrait tester le debordement de pile
+WSTR "n = "
+RINT
+PUSH R1
+BSR fact.
+SUBSP #1
+WSTR "fact = "
+LOAD R0, R1
+WINT
+WNL
+HALT
+; La fonction factorielle d'un entier >= 0. Par convention, le
+; resultat est dans R0. -2(LB) designe le parametre.
+Fact. :
+LOAD -2(LB), R1 ; recuperation du parametre effectif n
+BNE sinon_fact ; 11
+LOAD #1, R0 ; pour n = 0, n! = 1
+BRA fin.fact ; 13
+sinon_Fact:
+SUB #1, R1 ; 14
+PUSH R1 ; on empile n-1
+BSR fact. ; on calcule (n-1)!
+SUBSP #1 ; on depile le parametre
+MUL -2(LB), R0 ; on multiplie le resultat par n
+Fin.fact:
+RTS ; le resultat est dans R0

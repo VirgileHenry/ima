@@ -1,0 +1,12 @@
+# skip editor files
+/.idea
+/.vscode
+
+# previous version of ima
+/archive
+
+# wip vima
+/vima
+
+# doc files
+/doc

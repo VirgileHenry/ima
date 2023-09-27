@@ -1,0 +1,131 @@
+TSTO #11
+BOV pile_pleine
+ADDSP #7
+; --------------------------------------------------
+; Construction des tables des methodes
+; --------------------------------------------------
+; Construction de la table des methodes de Object
+LOAD #null, R0
+STORE R0, 1 (GB)
+LOAD code.Object.equals, R0
+STORE R0, 2 (GB)
+; Construction de la table des methodes de A
+LEA 1 (GB), R0
+STORE R0, 3 (GB)
+LOAD code.Object.equals, R0
+STORE R0, 4 (GB)
+LOAD code.A.getX, R0
+STORE R0, 5 (GB)
+LOAD code.A.setX, R0
+STORE R0, 6 (GB)
+; --------------------------------------------------
+; Code du programme principal
+; --------------------------------------------------
+; new ligne 13
+NEW #2, R2
+BOV tas_plein
+LEA 3 (GB), R0
+STORE R0, 0 (R2)
+PUSH R2
+BSR init.A
+POP R2
+STORE R2, 7 (GB)
+; Appel de methode ligne 16
+ADDSP #2
+LOAD 7 (GB), R2
+STORE R2, 0 (SP)
+LOAD #1, R2
+STORE R2, -1 (SP)
+LOAD 0 (SP), R2
+CMP #null, R2
+BEQ dereferencement_null
+LOAD 0 (R2), R2
+BSR 3 (R2)
+SUBSP #2
+; Instruction println ligne 17
+WSTR "a.getX() = "
+; Appel de methode ligne 17
+ADDSP #1
+LOAD 7 (GB), R2
+STORE R2, 0 (SP)
+LOAD 0 (SP), R2
+CMP #null, R2
+BEQ dereferencement_null
+LOAD 0 (R2), R2
+BSR 2 (R2)
+SUBSP #1
+LOAD R0, R1
+WINT
+WNL
+HALT
+; --------------------------------------------------
+; Classe Objet
+; --------------------------------------------------
+code.Object.equals :
+RTS
+; --------------------------------------------------
+; Classe A
+; --------------------------------------------------
+; ---------- Initialisation des champs de A
+init.A :
+LOAD #0, R0
+LOAD -2 (LB), R1
+STORE R0, 1 (R1)
+RTS
+; ---------- Code de la methode getX dans la classe A ligne 5
+code.A.getX :
+TSTO #1
+BOV pile_pleine
+; Sauvegarde des registres
+PUSH R2
+; Instruction return ligne 6
+LOAD -2 (LB), R2
+LOAD 1 (R2), R2
+LOAD R2, R0
+BRA fin.A.getX
+WSTR "Erreur"
+WNL
+ERROR
+fin.A.getX :
+; Restauration des registres
+POP R2
+RTS
+; ---------- Code de la methode setX dans la classe A ligne 8
+code.A.setX :
+TSTO #2
+BOV pile_pleine
+; Sauvegarde des registres
+PUSH R2
+PUSH R3
+; Affectation ligne 9
+LOAD -2 (LB), R2
+CMP #null, R2
+BEQ dereferencement_null
+LOAD -3 (LB), R3
+STORE R3, 1 (R2)
+fin.A.setX :
+; Restauration des registres
+POP R3
+POP R2
+RTS
+; --------------------------------------------------
+; Message d'erreur : dereferencement de null
+; --------------------------------------------------
+dereferencement_null :
+WSTR "Erreur"
+WNL
+ERROR
+; --------------------------------------------------
+; Message d'erreur : pile pleine
+; --------------------------------------------------
+pile_pleine :
+WSTR "Erreur"
+WNL
+ERROR
+; --------------------------------------------------
+; Message d'erreur : allocation impossible, tas plein
+; --------------------------------------------------
+tas_plein :
+WSTR "Erreur"
+WNL
+ERROR

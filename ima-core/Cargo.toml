@@ -7,3 +7,10 @@ edition = "2021"
 chrono = "0.4.31"
 hexf-parse = "0.2.1"
 regex = "1.9.5"
+
+[features]
+default = []
+
+# the public ima feature makes all the fields of ima public.
+# This allows heavier implementations, mostly for the vima crate.
+public-ima = []

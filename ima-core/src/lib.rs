@@ -26,5 +26,44 @@ mod ima;
 mod parser;
 mod instructions;
 
+/// export all the types for further use.
+pub mod complete {
+    pub use crate::{
+        parser::parser::Line,
+        instructions::{
+            Instruction,
+            Instructions,
+        },
+        ima::{
+            IMA,
+            control_flow::ImaControlFlow,
+            options::{
+                ImaOptions,
+                ImaRunMode,
+                OptionParsingError,
+            },
+            error::ImaError,
+            zones::{
+                program::{
+                    ReleaseModeProgram,
+                    DebugModeProgram,
+                    CodeAddr,
+                    RunMode,
+                    Program,
+                },
+                memory::{
+                    Memory,
+                    Pointer,
+                    StackPointer,
+                    HeapPointer,
+                },
+                registers::Registers,
+                flags::Flags,
+            },
+        },
+
+    };
+}
+
 #[cfg(test)]
 mod test;

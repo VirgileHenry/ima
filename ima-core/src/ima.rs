@@ -24,7 +24,7 @@ use crate::{
 
 use self::{
     zones::{
-        program::{Program, ReleaseModeProgram, DebugModeProgram, RunMode, VisualDebugModeProgram},
+        program::{Program, ReleaseModeProgram, DebugModeProgram, RunMode},
         memory::{Memory, StackPointer, Pointer},
         registers::Registers, flags::Flags,
     },
@@ -33,6 +33,7 @@ use self::{
     control_flow::ImaControlFlow, address_modes::RegisterIndex,
 };
 
+#[cfg(not(feature = "public-ima"))]
 pub struct IMA<RM: RunMode> {
     registers: Registers,
     code: Program<RM>,
@@ -44,6 +45,20 @@ pub struct IMA<RM: RunMode> {
     ima_start_time: Instant,
     run_mode: ImaRunMode,
     control_flow: ImaControlFlow,
+}
+
+#[cfg(feature = "public-ima")]
+pub struct IMA<RM: RunMode> {
+    pub registers: Registers,
+    pub code: Program<RM>,
+    pub memory: Memory,
+    pub flags: Flags,
+    pub gb: StackPointer,
+    pub lb: StackPointer,
+    pub sp: StackPointer,
+    pub ima_start_time: Instant,
+    pub run_mode: ImaRunMode,
+    pub control_flow: ImaControlFlow,
 }
 
 impl<RM: RunMode> IMA<RM> {
@@ -233,7 +248,7 @@ impl IMA<DebugModeProgram> {
     /// Run the program until a breakpoint is reached.
     /// If there is a breakpoint on the first instruction, it will be ignored.
     /// This allows to actually make progress when this is called reapeatedly.
-    fn run_until_breakpoint<R: BufRead, W: Write>(&mut self, input: &mut R, output: &mut W) -> Result<(), ImaError> {
+    pub fn run_until_breakpoint<R: BufRead, W: Write>(&mut self, input: &mut R, output: &mut W) -> Result<(), ImaError> {
         loop {
             let instruction = match self.code.fetch() {
                 Some(ins) => ins.clone(),
@@ -263,7 +278,7 @@ impl IMA<DebugModeProgram> {
     }
 
     /// Reset the ima to its initial state.
-    fn reset(&mut self) {
+    pub fn reset(&mut self) {
         self.registers = Registers::new(16);
         self.memory.clear();
         self.flags = Flags::new();
@@ -274,20 +289,5 @@ impl IMA<DebugModeProgram> {
         self.control_flow = ImaControlFlow::Continue;
         self.code.reset();
     }
-
-    pub fn to_visual_debug(self) -> IMA<VisualDebugModeProgram> {
-        IMA {
-            registers: self.registers,
-            code: self.code.to_visual_debug(),
-            memory: self.memory,
-            flags: self.flags,
-            gb: self.gb,
-            lb: self.lb,
-            sp: self.sp,
-            ima_start_time: self.ima_start_time,
-            run_mode: self.run_mode,
-            control_flow: self.control_flow,
-        }
-    } 
 }
 

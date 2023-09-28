@@ -11,6 +11,7 @@
 - Est-ce que les opérations sont quand même exécutées si le flag ov est levé ? (ex: div par 0) ça peut avoir du sens dans certains cas (float * float -> inf est un résultat valide) mais parfois peut faire paniquer la machine (division entière par zéro). Pour l'instant, la machine éxecute l'opération sauf si elle va faire paniquer le programme.
 - Est-ce qu'il y a une différence etiquette / adresse code ? le datatype peut être addresse code, quel interet que dval puisse aussi l'etre ? redondance entre Dval qui est une étiquette, ou Dval qui est une valeur de type adresse code ?
 - wutf8 interprète R1 comme un u32 ?
+- Est-ce que un RINT ou RFLOAT font des retours chariots ? (pour l'instant oui)
 
 #### à faire:
 

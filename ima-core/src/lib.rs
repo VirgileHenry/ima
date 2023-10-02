@@ -42,6 +42,7 @@ pub mod complete {
                 ImaRunMode,
                 OptionParsingError,
             },
+            data_type::DataType,
             error::{
                 ImaError,
                 ImaExecutionError

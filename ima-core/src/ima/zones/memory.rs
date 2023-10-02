@@ -117,6 +117,7 @@ impl Pointer {
 /// Memory of the IMA machine, split in stack and heap.
 /// Accessible via the pointer type. The total address mode is 32 bits,
 /// with the first bit being the type of memory (stack or heap).
+#[cfg(not(feature = "public-ima"))]
 pub struct Memory {
     /// Stack of the IMA memory.
     stack: Vec<DataType>,
@@ -124,6 +125,16 @@ pub struct Memory {
     heap: Vec<Option<DataType>>,
     /// Allocator for the heap.
     allocator: Box<dyn allocator::Allocator>,
+}
+
+#[cfg(feature = "public-ima")]
+pub struct Memory {
+    /// Stack of the IMA memory.
+    pub stack: Vec<DataType>,
+    /// Heap of the IMA memory.
+    pub heap: Vec<Option<DataType>>,
+    /// Allocator for the heap.
+    pub allocator: Box<dyn allocator::Allocator>,
 }
 
 impl Memory {

@@ -4,8 +4,14 @@ use crate::ima::{data_type::DataType, address_modes::RegisterIndex};
 
 /// The Register set of the machine.
 /// This only contains the registers from 0 to 15, not LB, GB and SP.
+#[cfg(not(feature = "public-ima"))]
 pub struct Registers {
     registers: Vec<DataType>,
+}
+
+#[cfg(feature = "public-ima")]
+pub struct Registers {
+    pub registers: Vec<DataType>,
 }
 
 

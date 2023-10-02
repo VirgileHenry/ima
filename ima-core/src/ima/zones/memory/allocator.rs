@@ -1,6 +1,6 @@
 /// Created by Virgile HENRY, 2023/09/28
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use crate::ima::data_type::DataType;
 
@@ -11,18 +11,22 @@ pub trait Allocator {
     fn allocate(&mut self, memory: &mut [Option<DataType>], size: usize) -> Option<HeapPointer>;
     fn free(&mut self, memory: &mut [Option<DataType>], ptr: HeapPointer) -> Option<()>;
     fn get_block(&self, ptr: HeapPointer) -> Option<(HeapPointer, usize)>;
+    /// Ideally, return an iterator over the allocations,
+    /// but not yet available in Rust (https://github.com/rust-lang/rust/issues/91611)
+    fn allocations<'a>(&self) -> Vec<(HeapPointer, usize)>;
 }
 
 
 /// Super naive linear allocator. Finds the next spot in memory big enough to fit the allocation.
 pub struct LinearAllocator {
-    allocations: HashMap<HeapPointer, usize>,
+    allocations: BTreeMap<HeapPointer, usize>,
 }
 
 impl LinearAllocator {
     pub fn new() -> LinearAllocator {
         LinearAllocator {
-            allocations: HashMap::new(),
+            // btreemap allows to order the allocations by address when displayed
+            allocations: BTreeMap::new(),
         }
     }
 }
@@ -74,5 +78,9 @@ impl Allocator for LinearAllocator {
             }
         }
         None
+    }
+
+    fn allocations(&self) -> Vec<(HeapPointer, usize)> {
+        self.allocations.iter().map(|(k, v)| (*k, *v)).collect()
     }
 }

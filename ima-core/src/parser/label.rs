@@ -6,7 +6,7 @@ use super::token::Token;
 
 /// A label is a string that can be used to reference a line of code.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct Label(String);
+pub struct Label(pub String);
 
 impl Display for Label {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

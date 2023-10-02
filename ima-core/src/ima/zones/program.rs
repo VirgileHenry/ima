@@ -72,13 +72,22 @@ impl RunMode for DebugModeProgram {
     }
 }
 
-
+#[cfg(not(feature = "public-ima"))]
 /// Represent a program in the IMA.
 pub struct Program<RM> {
     /// The program pointer.
     pc: CodeAddr,
     /// The code of the program.
     code: RM,
+}
+
+#[cfg(feature = "public-ima")]
+/// Represent a program in the IMA.
+pub struct Program<RM> {
+    /// The program pointer.
+    pub pc: CodeAddr,
+    /// The code of the program.
+    pub code: RM,
 }
 
 impl Program<ReleaseModeProgram> {

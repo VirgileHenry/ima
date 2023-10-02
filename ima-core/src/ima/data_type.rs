@@ -21,12 +21,21 @@ pub enum DataType {
     Undefined,
 }
 
+impl DataType {
+    pub fn is_undefined(&self) -> bool {
+        match self {
+            DataType::Undefined => true,
+            _ => false,
+        }
+    }
+}
+
 impl Display for DataType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self {
             DataType::Int(value) => write!(f, "{}", value),
             DataType::Float(value) => write!(f, "{}", value),
-            DataType::CodeAddr(value) => write!(f, "{}", value),
+            DataType::CodeAddr(value) => write!(f, "@ Code {}", value),
             DataType::MemAddr(value) => write!(f, "{}", value),
             DataType::Undefined => write!(f, "<Undefined>"),
         }

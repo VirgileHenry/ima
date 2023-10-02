@@ -3,6 +3,7 @@
 
 pub mod address_modes;
 pub mod control_flow;
+pub mod cycles;
 pub mod data_type;
 pub mod error;
 pub mod instructions;
@@ -17,10 +18,7 @@ use std::{
     }
 };
 
-use crate::{
-    instructions::Instructions,
-    ImaRunMode,
-};
+use crate::ImaRunMode;
 
 use self::{
     zones::{
@@ -45,6 +43,7 @@ pub struct IMA<RM: RunMode> {
     ima_start_time: Instant,
     run_mode: ImaRunMode,
     control_flow: ImaControlFlow,
+    cycle_count: usize,
 }
 
 #[cfg(feature = "public-ima")]
@@ -59,6 +58,7 @@ pub struct IMA<RM: RunMode> {
     pub ima_start_time: Instant,
     pub run_mode: ImaRunMode,
     pub control_flow: ImaControlFlow,
+    pub cycle_count: usize,
 }
 
 impl<RM: RunMode> IMA<RM> {
@@ -78,6 +78,7 @@ impl<RM: RunMode> IMA<RM> {
             ima_start_time: Instant::now(),
             run_mode: options.run_mode,
             control_flow: ImaControlFlow::Continue,
+            cycle_count: 0,
         }
     }
 }
@@ -85,7 +86,7 @@ impl<RM: RunMode> IMA<RM> {
 impl IMA<ReleaseModeProgram> {
     /// Run the ima in release mode.
     pub fn run<R: BufRead, W: Write>(&mut self, input: &mut R, output: &mut W) -> Result<(), ImaError> {
-        loop {
+        let res = loop {
             let instruction = match self.code.fetch() {
                 Some(ins) => ins.clone(),
                 None => return Err(ImaError::NoMoreInstructions),
@@ -106,7 +107,13 @@ impl IMA<ReleaseModeProgram> {
                 ImaControlFlow::Halt => break Ok(()),
                 ImaControlFlow::Error => break Ok(()), // todo return with error or failure ?
             }
+        };
+
+        if self.run_mode == ImaRunMode::Stats {
+            write!(output, "Cycle count: {}\n", self.cycle_count).map_err(|e| ImaError::DebugIoError(e))?;
         }
+
+        res
     }
 }
 
@@ -114,7 +121,7 @@ impl IMA<ReleaseModeProgram> {
 impl IMA<DebugModeProgram> {
     /// Runs the IMA in debug mode, expecting command line arguments from the user.
     pub fn run_debug<R: BufRead, W: Write>(&mut self, input: &mut R, output: &mut W) -> Result<(), ImaError> {
-        loop {
+        let res = loop {
             // fetch user input
             let mut command = String::new();
             
@@ -254,7 +261,11 @@ impl IMA<DebugModeProgram> {
                     break Ok(())
                 },
             }
-        }
+        };
+
+        write!(output, "Cycle count: {}\n", self.cycle_count).map_err(|e| ImaError::DebugIoError(e))?;
+
+        res
     }
 
     /// Run the program until a breakpoint is reached.

@@ -4,6 +4,7 @@
 use std::io::{BufRead, Write};
 
 use crate::{ima::{
+    cycles::CycleCost,
     IMA,
     address_modes::{
         DVAL,
@@ -21,7 +22,7 @@ use crate::{ima::{
         DataTypeFlag
     },
     zones::memory::Pointer
-}, instructions::Instructions};
+}, instructions::Instructions, complete::Instruction};
 
 use super::{
     control_flow::ImaControlFlow,
@@ -29,6 +30,74 @@ use super::{
     zones::program::RunMode
 };
 
+impl<RM: RunMode> IMA<RM> {
+    pub fn execute<R: BufRead, W: Write>(&mut self, instruction: Instruction, input: &mut R, output: &mut W) -> Result<(), ImaExecutionError> {
+        let cycle_cost = instruction.cycle_cost(&self.flags);
+        match instruction {
+            Instruction::LOAD(dval, rm) => self.load(dval, rm)?,
+            Instruction::STORE(rm, dadr) => self.store(rm, dadr)?,
+            Instruction::PUSH(rm) => self.push(rm)?,
+            Instruction::POP(rm) => self.pop(rm)?,
+            Instruction::LEA(dadr, rm) => self.lea(dadr, rm)?,
+            Instruction::PEA(dadr) => self.pea(dadr)?,
+            Instruction::NEW(dval, rm) => self.new(dval, rm)?,
+            Instruction::DEL(rm) => self.del(rm)?,
+            Instruction::CMP(dval, rm) => self.cmp(dval, rm)?,
+            Instruction::ADD(dval, rm) => self.add(dval, rm)?,
+            Instruction::SUB(dval, rm) => self.sub(dval, rm)?,
+            Instruction::MUL(dval, rm) => self.mul(dval, rm)?,
+            Instruction::OPP(dval, rm) => self.opp(dval, rm)?,
+            Instruction::QUO(dval, rm) => self.quo(dval, rm)?,
+            Instruction::REM(dval, rm) => self.rem(dval, rm)?,
+            Instruction::SEQ(rm) => self.seq(rm),
+            Instruction::SGT(rm) => self.sgt(rm),
+            Instruction::SGE(rm) => self.sge(rm),
+            Instruction::SOV(rm) => self.sov(rm),
+            Instruction::SNE(rm) => self.sne(rm),
+            Instruction::SLT(rm) => self.slt(rm),
+            Instruction::SLE(rm) => self.sle(rm),
+            Instruction::SHL(rm) => self.shl(rm)?,
+            Instruction::SHR(rm) => self.shr(rm)?,
+            Instruction::DIV(dval, rm) => self.div(dval, rm)?,
+            Instruction::FMA(dval, rm) => self.fma(dval, rm)?,
+            Instruction::FLOAT(dval, rm) => self.float(dval, rm)?,
+            Instruction::INT(dval, rm) => self.int(dval, rm)?,
+            Instruction::SETROUND_TONEAREST => self.setround_tonearest(),
+            Instruction::SETROUND_UPWARD => self.setround_upward(),
+            Instruction::SETROUND_DOWNWARD => self.setround_downward(),
+            Instruction::SETROUND_TOWARDZERO => self.setround_towardzero(),
+            Instruction::BRA(dval) => self.bra(dval)?,
+            Instruction::BEQ(dval) => self.beq(dval)?,
+            Instruction::BGT(dval) => self.bgt(dval)?,
+            Instruction::BGE(dval) => self.bge(dval)?,
+            Instruction::BOV(dval) => self.bov(dval)?,
+            Instruction::BNE(dval) => self.bne(dval)?,
+            Instruction::BLT(dval) => self.blt(dval)?,
+            Instruction::BLE(dval) => self.ble(dval)?,
+            Instruction::BSR(dval) => self.bsr(dval)?,
+            Instruction::RTS => self.rts()?,
+            Instruction::RINT => self.rint(input)?,
+            Instruction::RFLOAT => self.rfloat(input)?,
+            Instruction::WINT => self.wint(output)?,
+            Instruction::WFLOAT => self.wfloat(output)?,
+            Instruction::WFLOATX => self.wfloatx(output)?,
+            Instruction::WSTR(string) => self.wstr(output, string)?,
+            Instruction::WNL => self.wnl(output)?,
+            Instruction::RUTF8 => self.rutf8(input)?,
+            Instruction::WUTF8 => self.wutf8(output)?,
+            Instruction::ADDSP(value) => self.addsp(value)?,
+            Instruction::SUBSP(value) => self.subsp(value)?,
+            Instruction::TSTO(value) => self.tsto(value),
+            Instruction::HALT => self.halt(),
+            Instruction::ERROR => self.error(),
+            Instruction::SCLK => self.sclk(),
+            Instruction::CLK => self.clk(),
+        }
+        self.cycle_count += cycle_cost;
+        Ok(())
+    }
+
+} 
 
 impl<RM:RunMode> Instructions for IMA<RM> {
     fn add(&mut self, dval: DVAL, rm: RegisterIndex) -> Result<(), ImaExecutionError> {

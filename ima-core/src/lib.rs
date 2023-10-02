@@ -42,6 +42,7 @@ pub mod complete {
                 ImaRunMode,
                 OptionParsingError,
             },
+            cycles::CycleCost,
             data_type::DataType,
             error::{
                 ImaError,
@@ -70,7 +71,6 @@ pub mod complete {
                 RegisterIndex,
             }
         },
-
     };
 }
 

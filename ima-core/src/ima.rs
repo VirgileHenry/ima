@@ -240,7 +240,19 @@ impl IMA<DebugModeProgram> {
 
                 
                 ("q", "") => break Ok(()),
-                _ => {output.write(format!("Unknown Command").as_bytes()).map_err(|e| ImaError::DebugIoError(e))?;},
+                _ => writeln!(output, "Unknown Command").map_err(|e| ImaError::DebugIoError(e))?,
+            }
+
+            match self.control_flow {
+                ImaControlFlow::Continue => (),
+                ImaControlFlow::Halt => {
+                    writeln!(output, "Machine exit on halt status.").map_err(|e| ImaError::DebugIoError(e))?;
+                    break Ok(())
+                },
+                ImaControlFlow::Error => {
+                    writeln!(output, "Machine exit on error status.").map_err(|e| ImaError::DebugIoError(e))?;
+                    break Ok(())
+                },
             }
         }
     }

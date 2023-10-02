@@ -15,7 +15,6 @@ use crate::ima::{
         DADR
     },
     error::ImaExecutionError,
-    control_flow::ImaControlFlow
 };
 
 type Rm = RegisterIndex;
@@ -172,7 +171,7 @@ impl Display for Instruction {
 
 /// Trait for any object that can execute IMA instructions.
 pub trait Instructions {
-    fn execute<R: BufRead, W: Write>(&mut self, instruction: Instruction, input: &mut R, output: &mut W) -> Result<ImaControlFlow, ImaExecutionError> {
+    fn execute<R: BufRead, W: Write>(&mut self, instruction: Instruction, input: &mut R, output: &mut W) -> Result<(), ImaExecutionError> {
         match instruction {
             Instruction::LOAD(dval, rm) => self.load(dval, rm)?,
             Instruction::STORE(rm, dadr) => self.store(rm, dadr)?,
@@ -233,7 +232,7 @@ pub trait Instructions {
             Instruction::SCLK => self.sclk(),
             Instruction::CLK => self.clk(),
         }
-        Ok(ImaControlFlow::Continue)
+        Ok(())
     }
 
     /// Load the value dval in the register Rm.

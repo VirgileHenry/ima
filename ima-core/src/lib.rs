@@ -42,7 +42,10 @@ pub mod complete {
                 ImaRunMode,
                 OptionParsingError,
             },
-            error::ImaError,
+            error::{
+                ImaError,
+                ImaExecutionError
+            },
             zones::{
                 program::{
                     ReleaseModeProgram,
@@ -60,6 +63,11 @@ pub mod complete {
                 registers::Registers,
                 flags::Flags,
             },
+            address_modes::{
+                DVAL,
+                DADR,
+                RegisterIndex,
+            }
         },
 
     };

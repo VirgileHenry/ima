@@ -27,6 +27,8 @@ impl Display for ParserError {
     }
 }
 
+impl Error for ParserError {}
+
 /// Error that can be thrown by the parser.
 #[derive(Debug, Clone, PartialEq)]
 pub enum ParserErrorType {

@@ -33,9 +33,8 @@ VIMA est décomposé en plusieurs zones :
 ## Todo
 
 Note à moi même, les quelques features qu'ils faudrait encore rajouter
-- Bonne gestion des erreurs, cf ima
 - Colorations des zones utilisés par l'instruction courante
-- explorer le tas (voire même la pile / le programme ?)
+- explorer le tas (voire même la pile / le programme ?) en scrollant ou quoi
 
 ## Contribution
 

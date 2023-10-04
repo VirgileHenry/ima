@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
     execute,
@@ -10,14 +8,27 @@ use crossterm::{
         LeaveAlternateScreen
     },
 };
+use error::VimaError;
 use ima::VisualIMA;
 use ima_core::{IMA, ImaOptions, parse_debug};
 use ratatui::prelude::*;
 
 mod io;
 mod ima;
+mod error;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() {
+    let result = run();
+    match result {
+        Ok(_) => {/* all good */},
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+fn run() -> Result<(), VimaError> {
     // setup ima
     let ima_options = ImaOptions::new(std::env::args())?;
     let file = match std::fs::read_to_string(&ima_options.file) {
@@ -51,10 +62,5 @@ fn main() -> Result<(), Box<dyn Error>> {
     )?;
     terminal.show_cursor()?;
 
-    // error managment
-    if let Err(err) = res {
-        println!("{err:?}");
-    }
-
-    Ok(())
+    res
 }

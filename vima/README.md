@@ -2,7 +2,7 @@
 
 Vima (Visual-IMA) est une version débug de la machine virtuelle IMA, qui permet d'inspecter l'état de la machine pendant son éxecution de façon simple et claire. Elle à été conçue par dessus ma propre implémentation d'IMA. 
 
-![VIMA terminal interface](https://github.com/VirgileHenry/ima/blob/master/rm_images/vima.png?raw=true)
+![VIMA terminal interface](https://github.com/VirgileHenry/ima/blob/master/vima/rm_images/vima.png?raw=true)
 
 ## Installation
 

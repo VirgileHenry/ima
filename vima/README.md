@@ -35,6 +35,7 @@ VIMA est décomposé en plusieurs zones :
 Note à moi même, les quelques features qu'ils faudrait encore rajouter
 - Colorations des zones utilisés par l'instruction courante
 - explorer le tas (voire même la pile / le programme ?) en scrollant ou quoi
+- possibilité de reset après éxécution, pas forcément sortir
 
 ## Contribution
 

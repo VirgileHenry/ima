@@ -62,6 +62,7 @@ impl<'a, B: Backend> VisualIMA<'a, B> {
                 _ => {},
             }
 
+            // TODO : allow reset and go again.
             match self.ima.control_flow {
                 ImaControlFlow::Continue => (),
                 ImaControlFlow::Halt => {

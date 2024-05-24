@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "ima-core",
+    "ima",
+    "vima"
+]
+resolver = "2"

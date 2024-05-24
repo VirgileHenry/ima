@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use crate::{parse, IMA, ImaOptions};
 
 #[test]
+#[ignore]
 fn full() {
     // read all files in ima folder
     let paths = std::fs::read_dir("D:/Dev/rust/ima/ima-core/src/test/ass").unwrap();

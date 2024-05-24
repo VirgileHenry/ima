@@ -5,5 +5,8 @@
 # previous version of ima
 /archive
 
+# rust target dir
+/target
+
 # doc files
 /doc
